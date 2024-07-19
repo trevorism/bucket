@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "App",
+                title = "Bucket",
                 version = "0.1.0",
-                description = "API",
+                description = "Wraps the Google Cloud Storage API",
                 contact = @Contact(url = "https://trevorism.com", name = "Trevor Brooks", email = "tbrooks@trevorism.com")
         )
 )
