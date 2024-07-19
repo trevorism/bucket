@@ -16,7 +16,9 @@ class CloudStorageRepository implements DataRepository {
         Bucket bucket = storage.get(DEFAULT_BUCKET_NAME)
         List<String> fileNames = []
         bucket.list().iterateAll().each { Blob blob ->
-            fileNames.add(blob.getName())
+            if(!blob.getName().endsWith("/")) {
+                fileNames.add(blob.getName())
+            }
         }
         return fileNames
     }
