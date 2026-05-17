@@ -1,19 +1,21 @@
 package com.trevorism.service
 
 import com.google.cloud.storage.*
+import com.trevorism.bean.StorageProvider
 import io.micronaut.http.multipart.CompletedFileUpload
 
 @jakarta.inject.Singleton
 class CloudStorageRepository implements DataRepository {
 
-    private static final String GCP_DEFAULT_PROJECT = "trevorism-data"
-    private static final String DEFAULT_BUCKET_NAME = "trevorism"
+    private final StorageProvider storageProvider
 
-    private Storage storage = StorageOptions.newBuilder().setProjectId(GCP_DEFAULT_PROJECT).build().getService()
+    CloudStorageRepository(StorageProvider storageProvider) {
+        this.storageProvider = storageProvider
+    }
 
     @Override
     List<String> listAllFiles() {
-        Bucket bucket = storage.get(DEFAULT_BUCKET_NAME)
+        Bucket bucket = storageProvider.storage.get(storageProvider.bucketName)
         List<String> fileNames = []
         bucket.list().iterateAll().each { Blob blob ->
             if(!blob.getName().endsWith("/")) {
@@ -25,27 +27,27 @@ class CloudStorageRepository implements DataRepository {
 
     @Override
     String create(String path, CompletedFileUpload fileUpload) {
-        BlobId blobId = BlobId.of(DEFAULT_BUCKET_NAME, path)
+        BlobId blobId = BlobId.of(storageProvider.bucketName, path)
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build()
 
         Storage.BlobWriteOption precondition = createUploadingPrecondition(path)
         fileUpload.getInputStream().withStream { inputStream ->
-            storage.createFrom(blobInfo, inputStream, precondition)
+            storageProvider.storage.createFrom(blobInfo, inputStream, precondition)
         }
         return path
     }
 
     private Storage.BlobWriteOption createUploadingPrecondition(String path) {
-        if (storage.get(DEFAULT_BUCKET_NAME, path) == null) {
+        if (storageProvider.storage.get(storageProvider.bucketName, path) == null) {
             return Storage.BlobWriteOption.doesNotExist()
         } else {
-            return Storage.BlobWriteOption.generationMatch(storage.get(DEFAULT_BUCKET_NAME, path).getGeneration())
+            return Storage.BlobWriteOption.generationMatch(storageProvider.storage.get(storageProvider.bucketName, path).getGeneration())
         }
     }
 
     @Override
     byte [] read(String path) {
-        Bucket bucket = storage.get(DEFAULT_BUCKET_NAME)
+        Bucket bucket = storageProvider.storage.get(storageProvider.bucketName)
         Blob blob = bucket.get(path)
         if (blob == null) {
             return null
@@ -55,7 +57,7 @@ class CloudStorageRepository implements DataRepository {
 
     @Override
     String delete(String path) {
-        Bucket bucket = storage.get(DEFAULT_BUCKET_NAME)
+        Bucket bucket = storageProvider.storage.get(storageProvider.bucketName)
         Blob blob = bucket.get(path)
         if (blob == null) {
             return null

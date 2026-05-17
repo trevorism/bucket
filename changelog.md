@@ -1,7 +1,7 @@
-## 0.1.1
+# 0.2.0
 
-Update dependencies
+Enable multi-tenancy. Bucket name is now derived from the tenant claim in the JWT token, allowing tenant-specific data isolation.
 
-## 0.1.0
+# 0.1.0
 
-Initial implementation
+Initial release of the bucket service.
