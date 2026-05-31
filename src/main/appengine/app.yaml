@@ -1,4 +1,4 @@
-runtime: java17
+runtime: java25
 service: bucket
 entrypoint: java -jar bucket-all.jar
 handlers:
