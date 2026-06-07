@@ -61,6 +61,7 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic")
 
     implementation 'com.google.cloud:google-cloud-storage:2.42.0'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.47.0'
     implementation 'com.trevorism:micronaut-utility-beans:1.7.2'
 
     testImplementation 'com.trevorism:test-result-events:0.3.0'
