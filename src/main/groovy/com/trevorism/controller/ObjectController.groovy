@@ -22,14 +22,15 @@ class ObjectController {
     DataRepository repository
 
     @Tag(name = "Object Operations")
-    @Operation(summary = "Get all types")
+    @Operation(summary = "Get all files in the bucket **Secure")
     @Get(value = "/", produces = MediaType.APPLICATION_JSON)
+    @Secure(value = Roles.USER, allowInternal = true)
     List<String> listTables() {
         return repository.listAllFiles()
     }
 
     @Tag(name = "Object Operations")
-    @Operation(summary = "Get an object of type {kind} with id {id} **Secure")
+    @Operation(summary = "Get a file stored in the bucket **Secure")
     @Get(value = "{+restOfPath}", produces = MediaType.APPLICATION_OCTET_STREAM)
     @Secure(value = Roles.USER, allowInternal = true)
     byte [] read(String restOfPath) {
@@ -41,7 +42,7 @@ class ObjectController {
     }
 
     @Tag(name = "Object Operations")
-    @Operation(summary = "Upload data at {path} **Secure")
+    @Operation(summary = "Upload a file to the bucket **Secure")
     @Status(HttpStatus.CREATED)
     @Post(value = "{+restOfPath}", consumes = MediaType.MULTIPART_FORM_DATA, produces = MediaType.TEXT_PLAIN)
     @Secure(value = Roles.USER, allowInternal = true)
@@ -56,7 +57,7 @@ class ObjectController {
     }
 
     @Tag(name = "Object Operations")
-    @Operation(summary = "Delete data at {path} **Secure")
+    @Operation(summary = "Delete a file from the bucket **Secure")
     @Delete(value = "{+restOfPath}", produces = MediaType.TEXT_PLAIN)
     @Secure(value = Roles.USER, allowInternal = true)
     String delete(String restOfPath) {
